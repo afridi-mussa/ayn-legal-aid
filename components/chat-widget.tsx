@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { MessageCircle, X } from "lucide-react"
+import axios from "axios"
 
 type ChatMessage = {
   role: "user" | "assistant"
@@ -35,40 +36,18 @@ export function ChatWidget() {
     setError(null)
 
     try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ messages: nextMessages }),
-      })
-
-      if (!response.ok) {
-        let serverError = "Failed to get response"
-        try {
-          const data = (await response.json()) as { error?: string }
-          if (data?.error) serverError = data.error
-        } catch {}
-        throw new Error(serverError)
-      }
-
-      const data = (await response.json()) as { reply?: string; error?: string }
-
-      if (data.error) {
-        throw new Error(data.error)
-      }
+      const response = await axios.post("/api/chat", { messages: nextMessages })
 
       const assistantMessage: ChatMessage = {
         role: "assistant",
-        content: data.reply ?? "I could not generate a response.",
+        content: response.data.reply ?? "I could not generate a response.",
       }
 
       setMessages((prev) => [...prev, assistantMessage])
     } catch (err) {
-      const message =
-        typeof err === "object" && err !== null && "message" in err
-          ? String((err as any).message)
-          : "Something went wrong. Please try again."
+      const message = axios.isAxiosError(err) && err.response?.data?.error
+        ? err.response.data.error
+        : "Something went wrong. Please try again."
       setError(message)
       console.error(err)
     } finally {
