@@ -2,7 +2,11 @@ import Groq from "groq-sdk"
 import { NextResponse } from "next/server"
 
 const apiKey = process.env.GROQ_API_KEY
-const client = apiKey ? new Groq({ apiKey }) : null
+if (!apiKey) {
+  console.error("GROQ_API_KEY is not set")
+  throw new Error("GROQ_API_KEY is not set on the server.")
+}
+const client = new Groq({ apiKey })
 
 const LAWYER_CONTACT_INFO =
   "Lawyer contact details:\n" +
@@ -13,12 +17,6 @@ const LAWYER_CONTACT_INFO =
 
 export async function POST(request: Request) {
   try {
-    if (!apiKey || !client) {
-      return NextResponse.json(
-        { error: "GROQ_API_KEY is not set on the server." },
-        { status: 500 },
-      )
-    }
     const body = await request.json()
     const messages = body?.messages
 
@@ -36,11 +34,7 @@ export async function POST(request: Request) {
       lastContent.includes("email") ||
       lastContent.includes("number")
     ) {
-      const reply =
-        LAWYER_CONTACT_INFO +
-        "\n\nI am an AI assistant (not a lawyer). Please reach out directly to Syed Shahzaib Bukhari for real legal advice."
-
-      return NextResponse.json({ reply })
+      return NextResponse.json({ reply: LAWYER_CONTACT_INFO })
     }
 
     const completion = await client.chat.completions.create({
@@ -49,7 +43,7 @@ export async function POST(request: Request) {
         {
           role: "system",
           content:
-            "You are the Ayn Legal AI assistant (a chatbot), not a lawyer. Always clearly state that you are a bot and do NOT provide formal legal advice. Provide only general legal information and guidance in simple language. If the user asks how to contact a lawyer, you MUST answer with these exact contact details: Lawyer contact details: Name: Syed Shahzaib Bukhari. Phone: +92 339 3383379. Email: aynlegalaid.club@gmail.com. Also remind them to use the Contact section on the website for appointments.",
+            "You are Ayn Legal AI assistant (a chatbot), not a lawyer. Always clearly state that you are a bot and do NOT provide formal legal advice. Provide only general legal information and guidance in simple language. If the user asks how to contact a lawyer, you MUST answer with these exact contact details: Lawyer contact details: Name: Syed Shahzaib Bukhari. Phone: +92 339 3383379. Email: aynlegalaid.club@gmail.com. Also remind them to use the Contact section on the website for appointments.",
         },
         ...messages,
       ],
@@ -61,10 +55,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ reply })
   } catch (error) {
     console.error("/api/chat error", error)
-    const message =
-      typeof error === "object" && error !== null && "message" in error
-        ? String((error as any).message)
-        : "Something went wrong"
+    const message = error instanceof Error ? error.message : "Something went wrong"
 
     return NextResponse.json({ error: message }, { status: 500 })
   }
