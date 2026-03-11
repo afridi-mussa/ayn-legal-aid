@@ -2,12 +2,19 @@
 
 import { useEffect, useRef, useState } from "react"
 import { MessageCircle, X } from "lucide-react"
-import axios from "axios"
+import Groq from "groq-sdk"
 
 type ChatMessage = {
   role: "user" | "assistant"
   content: string
 }
+
+const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY
+const client = new Groq({
+  apiKey: process.env.NEXT_PUBLIC_GROQ_API_KEY!,
+  dangerouslyAllowBrowser: true,
+})
+
 
 export function ChatWidget() {
   const [open, setOpen] = useState(false)
@@ -36,19 +43,29 @@ export function ChatWidget() {
     setError(null)
 
     try {
-      const response = await axios.post("/api/chat", { messages: nextMessages })
+      const completion = await client.chat.completions.create({
+        model: "llama-3.1-8b-instant",
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are the Ayn Legal AI assistant (a chatbot), not a lawyer. Always clearly state that you are a bot and do NOT provide formal legal advice. Provide only general legal information and guidance in simple language. If the user asks how to contact a lawyer, you MUST answer with these exact contact details: Lawyer contact details: Name: Syed Shahzaib Bukhari. Phone: +92 339 3383379. Email: aynlegalaid.club@gmail.com. Also remind them to use the Contact section on the website for appointments.",
+          },
+          ...nextMessages,
+        ],
+        temperature: 0.3,
+      })
 
       const assistantMessage: ChatMessage = {
         role: "assistant",
-        content: response.data.reply ?? "I could not generate a response.",
+        content:
+          completion.choices[0]?.message?.content ??
+          "I could not generate a response.",
       }
 
       setMessages((prev) => [...prev, assistantMessage])
     } catch (err) {
-      const message = axios.isAxiosError(err) && err.response?.data?.error
-        ? err.response.data.error
-        : "Something went wrong. Please try again."
-      setError(message)
+      setError("Something went wrong. Please try again.")
       console.error(err)
     } finally {
       setLoading(false)
@@ -69,7 +86,9 @@ export function ChatWidget() {
           <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800">
             <div>
               <p className="text-sm font-semibold">Ask Ayn Legal</p>
-              <p className="text-xs text-zinc-400">Chat with our assistant about services and support.</p>
+              <p className="text-xs text-zinc-400">
+                Chat with our assistant about services and support.
+              </p>
             </div>
             <button
               type="button"
@@ -107,10 +126,15 @@ export function ChatWidget() {
             ))}
             {error && <div className="text-[10px] text-red-400">{error}</div>}
           </div>
-          <form onSubmit={handleSend} className="border-t border-zinc-800 px-3 py-2">
+          <form
+            onSubmit={handleSend}
+            className="border-t border-zinc-800 px-3 py-2"
+          >
             <input
               type="text"
-              placeholder={loading ? "Waiting for response..." : "Type your message..."}
+              placeholder={
+                loading ? "Waiting for response..." : "Type your message..."
+              }
               className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs outline-none focus:border-zinc-500 disabled:opacity-60"
               value={input}
               onChange={(e) => setInput(e.target.value)}
