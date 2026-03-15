@@ -10,7 +10,6 @@ const client = new Groq({ apiKey })
 
 const LAWYER_CONTACT_INFO =
   "Lawyer contact details:\n" +
-  "Name: Syed Shahzaib Bukhari\n" +
   "Phone: +92 339 3383379\n" +
   "Email: aynlegalaid.club@gmail.com\n" +
   "For appointments or detailed legal advice, please use these contact details or the Contact section on our website."

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { MessageCircle, X } from "lucide-react"
+import { MessageCircle, X, Minimize2, Maximize2 } from "lucide-react"
 import Groq from "groq-sdk"
 
 type ChatMessage = {
@@ -15,14 +15,15 @@ const client = new Groq({
   dangerouslyAllowBrowser: true,
 })
 
-
 export function ChatWidget() {
   const [open, setOpen] = useState(false)
+  const [minimized, setMinimized] = useState(false)
+  const [isFullscreen, setIsFullscreen] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: "assistant",
       content:
-        "I am the Ayn Legal AI assistant (not a lawyer). I can share general legal information. For real legal advice, please contact our lawyers through the Contact section on this website.",
+        "I am the Ayn Legal AI assistant (not a lawyer). I can share general legal information. For real legal advice, please contact our lawyers through the Contact section on this website.\n\nContact details:\nPhone: +92 339 3383379\nEmail: aynlegalaid.club@gmail.com\nFor appointments or detailed legal advice, please use these contact details or the Contact section on our website.",
     },
   ])
   const [input, setInput] = useState("")
@@ -49,7 +50,7 @@ export function ChatWidget() {
           {
             role: "system",
             content:
-              "You are the Ayn Legal AI assistant (a chatbot), not a lawyer. Always clearly state that you are a bot and do NOT provide formal legal advice. Provide only general legal information and guidance in simple language. If the user asks how to contact a lawyer, you MUST answer with these exact contact details: Lawyer contact details: Name: Syed Shahzaib Bukhari. Phone: +92 339 3383379. Email: aynlegalaid.club@gmail.com. Also remind them to use the Contact section on the website for appointments.",
+              "You are Ayn Legal AI assistant. Provide general legal information in simple language. Do NOT provide formal legal advice. If the user asks how to contact a lawyer, provide these exact details: Phone: +92 339 3383379, Email: aynlegalaid.club@gmail.com. Keep responses concise and directly address the user's question.",
           },
           ...nextMessages,
         ],
@@ -80,9 +81,9 @@ export function ChatWidget() {
   }, [messages, open])
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
-      {open && (
-        <div className="w-80 sm:w-96 rounded-xl border border-zinc-800 bg-zinc-950/95 text-zinc-50 shadow-2xl backdrop-blur-md">
+    <div className={`fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2 ${isFullscreen ? 'inset-0' : ''}`}>
+      {open && !minimized && (
+        <div className={`rounded-xl border border-zinc-800 bg-zinc-950/95 text-zinc-50 shadow-2xl backdrop-blur-md ${isFullscreen ? 'w-full h-full flex flex-col' : 'w-80 sm:w-96'}`}>
           <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800">
             <div>
               <p className="text-sm font-semibold">Ask Ayn Legal</p>
@@ -90,17 +91,42 @@ export function ChatWidget() {
                 Chat with our assistant about services and support.
               </p>
             </div>
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              className="inline-flex h-7 w-7 items-center justify-center rounded-full hover:bg-zinc-800/80 focus:outline-none focus:ring-2 focus:ring-zinc-500"
-            >
-              <X className="h-4 w-4" />
-            </button>
+            <div className="flex items-center gap-1">
+              {/*{!isFullscreen && (
+                <button
+                  type="button"
+                  onClick={() => setMinimized(true)}
+                  className="inline-flex h-7 w-7 items-center justify-center rounded-full hover:bg-zinc-800/80 focus:outline-none focus:ring-2 focus:ring-zinc-500"
+                  aria-label="Minimize chat"
+                >
+                  <Minimize2 className="h-4 w-4" />
+                </button>
+              )}*/}
+              <button
+                type="button"
+                onClick={() => setIsFullscreen(!isFullscreen)}
+                className="inline-flex h-7 w-7 items-center justify-center rounded-full hover:bg-zinc-800/80 focus:outline-none focus:ring-2 focus:ring-zinc-500"
+                aria-label={isFullscreen ? "Exit fullscreen" : "Maximize chat"}
+              >
+                {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false)
+                  setMinimized(false)
+                  setIsFullscreen(false)
+                }}
+                className="inline-flex h-7 w-7 items-center justify-center rounded-full hover:bg-zinc-800/80 focus:outline-none focus:ring-2 focus:ring-zinc-500"
+                aria-label="Close chat"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
           </div>
           <div
             ref={messagesContainerRef}
-            className="flex flex-col gap-3 px-4 py-3 text-xs max-h-72 overflow-y-auto"
+            className={`flex flex-col gap-3 px-4 py-3 text-xs overflow-y-auto ${isFullscreen ? 'flex-1' : 'max-h-72'}`}
           >
             {messages.map((message, index) => (
               <div
@@ -112,7 +138,7 @@ export function ChatWidget() {
                     : "self-end bg-emerald-600 text-white")
                 }
               >
-                {message.role === "assistant" ? (
+                {message.role === "assistant" && index === 0 ? (
                   <>
                     <p className="mb-1 text-[10px] font-semibold text-emerald-300">
                       Ayn Legal AI assistant (bot, not a lawyer)
@@ -144,14 +170,49 @@ export function ChatWidget() {
         </div>
       )}
 
-      <button
-        type="button"
-        onClick={() => setOpen((prev) => !prev)}
-        className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-white shadow-xl shadow-emerald-500/30 hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-        aria-label={open ? "Close chat" : "Open chat"}
-      >
-        <MessageCircle className="h-6 w-6" />
-      </button>
+      {open && minimized && (
+        <div className="w-80 sm:w-96 rounded-xl border border-zinc-800 bg-zinc-950/95 text-zinc-50 shadow-2xl backdrop-blur-md">
+          <div className="flex items-center justify-between px-4 py-3">
+            <div>
+              <p className="text-sm font-semibold">Ask Ayn Legal</p>
+              <p className="text-xs text-zinc-400">Chat minimized</p>
+            </div>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setMinimized(false)}
+                className="inline-flex h-7 w-7 items-center justify-center rounded-full hover:bg-zinc-800/80 focus:outline-none focus:ring-2 focus:ring-zinc-500"
+                aria-label="Restore chat"
+              >
+                <Maximize2 className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false)
+                  setMinimized(false)
+                  setIsFullscreen(false)
+                }}
+                className="inline-flex h-7 w-7 items-center justify-center rounded-full hover:bg-zinc-800/80 focus:outline-none focus:ring-2 focus:ring-zinc-500"
+                aria-label="Close chat"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {!open && (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-white shadow-xl shadow-emerald-500/30 hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+          aria-label="Open chat"
+        >
+          <MessageCircle className="h-6 w-6" />
+        </button>
+      )}
     </div>
   )
 }
