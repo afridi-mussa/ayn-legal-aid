@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { MessageCircle, X, Minimize2, Maximize2 } from "lucide-react"
+import { Bot, X, Minimize2, Maximize2, Send } from "lucide-react"
 import Groq from "groq-sdk"
 
 type ChatMessage = {
@@ -23,7 +23,7 @@ export function ChatWidget() {
     {
       role: "assistant",
       content:
-        "I am the Ayn Legal AI assistant (not a lawyer). I can share general legal information. For real legal advice, please contact our lawyers through the Contact section on this website.\n\nContact details:\nPhone: +92 339 3383379\nEmail: aynlegalaid.club@gmail.com\nFor appointments or detailed legal advice, please use these contact details or the Contact section on our website.",
+        "I am Insaf Legal AI assistant (not a lawyer). I can share general legal information. For real legal advice, please contact our lawyers through the Contact section on this website.\n\nContact details:\nPhone: +92 339 3383379\nEmail: aynlegalaid.club@gmail.com\nFor appointments or detailed legal advice, please use these contact details or the Contact section on our website.",
     },
   ])
   const [input, setInput] = useState("")
@@ -141,7 +141,7 @@ export function ChatWidget() {
                 {message.role === "assistant" && index === 0 ? (
                   <>
                     <p className="mb-1 text-[10px] font-semibold text-emerald-300">
-                      Ayn Legal AI assistant (bot, not a lawyer)
+                      Insaf Legal AI assistant (bot, not a lawyer)
                     </p>
                     <p>{message.content}</p>
                   </>
@@ -154,18 +154,26 @@ export function ChatWidget() {
           </div>
           <form
             onSubmit={handleSend}
-            className="border-t border-zinc-800 px-3 py-2"
+            className="border-t border-zinc-800 px-3 py-2 flex gap-2"
           >
             <input
               type="text"
               placeholder={
                 loading ? "Waiting for response..." : "Type your message..."
               }
-              className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs outline-none focus:border-zinc-500 disabled:opacity-60"
+              className="flex-1 rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs outline-none focus:border-zinc-500 disabled:opacity-60"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               disabled={loading}
             />
+            <button
+              type="submit"
+              disabled={loading}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-white hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-60"
+              aria-label="Send message"
+            >
+              <Send className="h-4 w-4" />
+            </button>
           </form>
         </div>
       )}
@@ -210,7 +218,7 @@ export function ChatWidget() {
           className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-white shadow-xl shadow-emerald-500/30 hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400"
           aria-label="Open chat"
         >
-          <MessageCircle className="h-6 w-6" />
+          <Bot className="h-6 w-6" />
         </button>
       )}
     </div>
