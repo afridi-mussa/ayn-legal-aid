@@ -49,6 +49,11 @@ export function ChatWidget() {
       const completion = await client.chat.completions.create({
         model: "llama-3.1-8b-instant",
         messages: [
+          {
+            role: "system",
+            content:
+              "You are Insaf Legal AI. Respond professionally like a lawyer, addressing queries and questions with legal precision. Provide only factual legal information based on established laws and regulations. Do not give opinions or general advice - stick to legal principles and statutes.",
+          },
           ...nextMessages,
         ],
         temperature: 0.3,
@@ -140,10 +145,28 @@ export function ChatWidget() {
                     <p className="mb-1 text-[10px] font-semibold text-emerald-300">
                       Insaf Legal AI assistant (bot, not a lawyer)
                     </p>
-                    <p>{message.content}</p>
+                    <div 
+                      className="prose prose-invert prose-xs max-w-none"
+                      dangerouslySetInnerHTML={{ 
+                        __html: message.content
+                          .replace(/\n/g, '<br>')
+                          .replace(/•\s/g, '<li>• ')
+                          .replace(/(\d+\.\s)/g, '<li>$1')
+                          .replace(/<li>/g, '<li class="ml-4">')
+                      }}
+                    />
                   </>
                 ) : (
-                  <p>{message.content}</p>
+                  <div 
+                    className="prose prose-invert prose-xs max-w-none"
+                    dangerouslySetInnerHTML={{ 
+                      __html: message.content
+                        .replace(/\n/g, '<br>')
+                        .replace(/•\s/g, '<li>• ')
+                        .replace(/(\d+\.\s)/g, '<li>$1')
+                        .replace(/<li>/g, '<li class="ml-4">')
+                    }}
+                  />
                 )}
               </div>
             ))}
