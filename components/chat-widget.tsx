@@ -23,7 +23,9 @@ export function ChatWidget() {
     {
       role: "assistant",
       content:
-        "I am Insaf Legal AI assistant (not a lawyer). I can share general legal information. For real legal advice, please contact our lawyers through the Contact section on this website.\n\nContact details:\nPhone: +92 339 3383379\nEmail: aynlegalaid.club@gmail.com\nFor appointments or detailed legal advice, please use these contact details or the Contact section on our website.",
+        `This AI tool is not a lawyer and provides only general information and educational insights about legal concepts.
+                It is not legal advice. For personalized guidance or representation, contact Ayn Legal Aid & Club.
+                Feel free to contact us⚖️`,
     },
   ])
   const [input, setInput] = useState("")
@@ -47,11 +49,6 @@ export function ChatWidget() {
       const completion = await client.chat.completions.create({
         model: "llama-3.1-8b-instant",
         messages: [
-          {
-            role: "system",
-            content:
-              "You are Ayn Legal AI assistant. Provide general legal information in simple language. Do NOT provide formal legal advice. If the user asks how to contact a lawyer, provide these exact details: Phone: +92 339 3383379, Email: aynlegalaid.club@gmail.com. Keep responses concise and directly address the user's question.",
-          },
           ...nextMessages,
         ],
         temperature: 0.3,
