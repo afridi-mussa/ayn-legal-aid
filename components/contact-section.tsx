@@ -77,26 +77,14 @@ Thank you,`)
                       href="tel:+923393383379"
                       className="text-primary hover:text-primary/80 underline transition-colors"
                     >
-                     +92 339 3383379
+                      +92 339 3383379
                     </a>
                     <br />
-                    
+
                   </div>
                 </div>
 
-                <div className="flex items-start gap-4">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <MapPin className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground">Office</h4>
-                    <p className="text-muted-foreground">
-                      123 Legal Plaza, Main Boulevard
-                      <br />
-                      Lahore, Punjab, Pakistan
-                    </p>
-                  </div>
-                </div>
+
 
                 <div className="flex items-start gap-4">
                   <div className="p-2 bg-primary/10 rounded-lg">
@@ -179,7 +167,7 @@ Thank you,`)
                     Contact Support Team
                   </Button>
 
-                 
+
                 </div>
               </div>
 

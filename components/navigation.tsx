@@ -4,10 +4,11 @@ import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Menu, X, ExternalLink } from "lucide-react"
+import { Menu, X, ExternalLink, ChevronDown } from "lucide-react"
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false) // mobile dropdown
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-background/95 backdrop-blur-sm border-b border-border">
@@ -33,25 +34,36 @@ export function Navigation() {
             <Link href="/about" className="text-foreground hover:text-primary transition-colors">
               About
             </Link>
-            <Link href="/services" className="text-foreground hover:text-primary transition-colors">
-              Services
-            </Link>
+
+            {/* Desktop Services Dropdown */}
+            <div className="relative group">
+              <button className="flex items-center text-foreground hover:text-primary transition-colors gap-1">
+                Services <ChevronDown className="w-4 h-4" />
+              </button>
+
+              <div className="absolute left-0 top-full mt-2 w-56 bg-card border border-border rounded-md shadow-lg py-2 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-200 z-50">
+                <Link
+                  href="/services"
+                  className="block px-4 py-2 text-foreground hover:bg-primary/10 transition-colors"
+                >
+                  Litigation Services
+                </Link>
+                <Link
+                  href="/cyberSecurity-services"
+                  className="block px-4 py-2 text-foreground hover:bg-primary/10 transition-colors"
+                >
+                  Cyber Analysis
+                </Link>
+              </div>
+            </div>
+
             <a href="/#ambassadors" className="text-foreground hover:text-primary transition-colors scroll-smooth">
               Ambassadors
             </a>
             <Link href="/contact" className="text-foreground hover:text-primary transition-colors">
               Contact
             </Link>
-            <Button asChild className="animate-pulse-green">
-              <a
-                href="https://forms.gle/whaTsGAPppdkLxRf8"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2"
-              >
-                Register Now <ExternalLink className="w-4 h-4" />
-              </a>
-            </Button>
+         
           </div>
 
           {/* Mobile menu button */}
@@ -80,13 +92,35 @@ export function Navigation() {
               >
                 About
               </Link>
-              <Link
-                href="/services"
-                className="block px-3 py-2 text-foreground hover:text-primary transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                Services
-              </Link>
+
+              {/* Mobile Services Dropdown */}
+              <div>
+                <button
+                  onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
+                  className="flex items-center w-full justify-between px-3 py-2 text-foreground hover:text-primary transition-colors"
+                >
+                  Services <ChevronDown className="w-4 h-4" />
+                </button>
+                {mobileServicesOpen && (
+                  <div className="pl-6 space-y-1">
+                    <Link
+                      href="/services"
+                      className="block px-3 py-2 text-foreground hover:text-primary transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Litigation Services
+                    </Link>
+                    <Link
+                      href="/cyberSecurity-services"
+                      className="block px-3 py-2 text-foreground hover:text-primary transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Cyber Analysis
+                    </Link>
+                  </div>
+                )}
+              </div>
+
               <a
                 href="/#ambassadors"
                 className="block px-3 py-2 text-foreground hover:text-primary transition-colors"
@@ -102,16 +136,7 @@ export function Navigation() {
                 Contact
               </Link>
               <div className="px-3 py-2">
-                <Button asChild className="w-full">
-                  <a
-                    href="https://forms.gle/whaTsGAPppdkLxRf8"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2"
-                  >
-                    Apply Now <ExternalLink className="w-4 h-4" />
-                  </a>
-                </Button>
+               
               </div>
             </div>
           </div>

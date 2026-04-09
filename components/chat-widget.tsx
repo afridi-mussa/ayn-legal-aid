@@ -145,9 +145,9 @@ export function ChatWidget() {
                     <p className="mb-1 text-[10px] font-semibold text-emerald-300">
                       Insaf Legal AI assistant (bot, not a lawyer)
                     </p>
-                    <div 
+                    <div
                       className="prose prose-invert prose-xs max-w-none"
-                      dangerouslySetInnerHTML={{ 
+                      dangerouslySetInnerHTML={{
                         __html: message.content
                           .replace(/\n/g, '<br>')
                           .replace(/•\s/g, '<li>• ')
@@ -157,9 +157,9 @@ export function ChatWidget() {
                     />
                   </>
                 ) : (
-                  <div 
+                  <div
                     className="prose prose-invert prose-xs max-w-none"
-                    dangerouslySetInnerHTML={{ 
+                    dangerouslySetInnerHTML={{
                       __html: message.content
                         .replace(/\n/g, '<br>')
                         .replace(/•\s/g, '<li>• ')
@@ -231,14 +231,28 @@ export function ChatWidget() {
         </div>
       )}
 
+      {/* ✅ UPDATED BUTTON (FROM CODE 2 STYLE) */}
       {!open && (
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-white shadow-xl shadow-emerald-500/30 hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+          className="relative h-20 w-20 rounded-full bg-black flex items-center justify-center shadow-xl shadow-black/50 focus:outline-none"
           aria-label="Open chat"
         >
-          <Bot className="h-6 w-6" />
+          {/* Glow pulse */}
+          <span className="absolute inset-0 rounded-full bg-white/20 animate-[pulse_2s_infinite]" />
+
+          {/* Ring animation */}
+          <span className="absolute inset-0 rounded-full border border-green-400 animate-[ping_2s_infinite]" />
+
+          {/* Bot Icon */}
+          <span className="relative z-10">
+            <Bot size={40} className="text-white animate-[bounce_1.2s_infinite]" />
+          </span>
+
+          {/* Lightning effects */}
+          <span className="absolute top-0 left-1/2 w-1 h-6 bg-green-400 rounded animate-[flash_1s_infinite]" />
+          <span className="absolute bottom-0 right-1/2 w-1 h-6 bg-green-300 rounded animate-[flash_1.2s_infinite]" />
         </button>
       )}
     </div>

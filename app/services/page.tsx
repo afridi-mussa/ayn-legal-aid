@@ -30,8 +30,8 @@ export default function ServicesPage() {
         "Notarization Services",
         "Legal Translation",
       ],
-      pricing: "Starting from PKR 5,000",
-      duration: "2-5 business days",
+      pricing: "Contact for pricing",
+      
       category: "Documentation",
     },
     {
@@ -45,8 +45,8 @@ export default function ServicesPage() {
         "Marriage Contracts",
         "Family Mediation",
       ],
-      pricing: "Starting from PKR 15,000",
-      duration: "Varies by case",
+      pricing: "Contact for pricing",
+      
       category: "Family",
     },
     {
@@ -60,8 +60,8 @@ export default function ServicesPage() {
         "Title Verification",
         "Property Documentation",
       ],
-      pricing: "Starting from PKR 10,000",
-      duration: "1-3 weeks",
+      pricing: "Contact for pricing",
+      
       category: "Property",
     },
     {
@@ -75,8 +75,8 @@ export default function ServicesPage() {
         "Intellectual Property",
         "Employment Law",
       ],
-      pricing: "Starting from PKR 20,000",
-      duration: "1-4 weeks",
+      pricing: "Contact for pricing",
+      
       category: "Corporate",
     },
     {
@@ -90,8 +90,8 @@ export default function ServicesPage() {
         "Legal Consultation",
         "Case Investigation",
       ],
-      pricing: "Starting from PKR 25,000",
-      duration: "Varies by case",
+      pricing: "Contact for pricing",
+      
       category: "Criminal",
     },
     {
@@ -105,8 +105,8 @@ export default function ServicesPage() {
         "Legal Awareness Programs",
         "Document Assistance",
       ],
-      pricing: "Free of charge",
-      duration: "Varies",
+      pricing: "Contact for pricing",
+      
       category: "Pro Bono",
     },
   ]
@@ -188,10 +188,7 @@ export default function ServicesPage() {
                           <DollarSign className="w-4 h-4 text-primary" />
                           <span className="font-medium text-card-foreground">{service.pricing}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm">
-                          <Clock className="w-4 h-4 text-primary" />
-                          <span className="text-muted-foreground">{service.duration}</span>
-                        </div>
+                       
                       </div>
                     </div>
                   </CardContent>

@@ -28,7 +28,7 @@ export function AboutSection() {
             </p>
           </div>
           <div className="relative">
-            <img src="/pakistani-legal-professionals-in-modern-office-set.jpg" alt="Legal professionals at work" className="rounded-lg shadow-lg" />
+            <img src="/our-mission.jpeg" alt="Legal professionals at work" className="rounded-lg shadow-lg" />
           </div>
         </div>
 
@@ -83,9 +83,9 @@ export function AboutSection() {
                 <Card className="h-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                   <CardContent className="pt-8 pb-6 px-4 text-center">
                     <div className="w-32 h-32 rounded-full mx-auto mb-6 ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all overflow-hidden flex-shrink-0">
-                      <img 
-                        src="/ahzam.jpeg" 
-                        alt="Ahzam Zahid Chishti" 
+                      <img
+                        src="/ahzam.jpeg"
+                        alt="Ahzam Zahid Chishti"
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -107,9 +107,9 @@ export function AboutSection() {
                 <Card className="h-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                   <CardContent className="pt-8 pb-6 px-4 text-center">
                     <div className="w-32 h-32 rounded-full mx-auto mb-6 ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all overflow-hidden flex-shrink-0">
-                      <img 
-                        src="/shahzaib-1.jpeg" 
-                        alt="Syed Shahzaib Bukhari" 
+                      <img
+                        src="/shahzaib-1.jpeg"
+                        alt="Syed Shahzaib Bukhari"
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -127,40 +127,13 @@ export function AboutSection() {
               </div>
 
               {/* Team Member 3 */}
-              <div className="group w-full max-w-sm mx-auto sm:col-span-2 lg:col-span-1">
-                <Card className="h-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                  <CardContent className="pt-8 pb-6 px-4 text-center">
-                    <div className="w-32 h-32 rounded-full mx-auto mb-6 ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all overflow-hidden flex-shrink-0">
-                      <img 
-                        src="/irsa.jpeg" 
-                        alt="Irsa Bukhari" 
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <h3 className="text-lg md:text-xl font-bold text-card-foreground mb-2 min-h-[3.5rem] flex items-center justify-center">
-                      Irsa Bukhari
-                    </h3>
-                    <p className="text-primary font-semibold mb-3 text-sm md:text-base min-h-[2.5rem] flex items-center justify-center">
-                      Director of Student & Youth Engagement
-                    </p>
-                    <p className="text-muted-foreground text-sm leading-relaxed min-h-[3rem]">
-                      Leads youth programs, student outreach, and awareness initiatives.
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-
-            {/* Second Row - 2 Cards Centered */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 mt-6 md:mt-8 max-w-2xl mx-auto">
-              {/* Team Member 4 */}
               <div className="group w-full max-w-sm mx-auto">
                 <Card className="h-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                   <CardContent className="pt-8 pb-6 px-4 text-center">
                     <div className="w-32 h-32 rounded-full mx-auto mb-6 ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all overflow-hidden flex-shrink-0">
-                      <img 
-                        src="/saif.jpeg" 
-                        alt="Saif ur Rehman" 
+                      <img
+                        src="/saif.jpeg"
+                        alt="Saif ur Rehman"
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -176,15 +149,42 @@ export function AboutSection() {
                   </CardContent>
                 </Card>
               </div>
+            </div>
 
-              {/* Team Member 5 */}
+            {/* Second Row - 3 Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mt-6 md:mt-8">
+              {/* Team Member 4 - Rabeea */}
               <div className="group w-full max-w-sm mx-auto">
                 <Card className="h-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                   <CardContent className="pt-8 pb-6 px-4 text-center">
                     <div className="w-32 h-32 rounded-full mx-auto mb-6 ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all overflow-hidden flex-shrink-0">
-                      <img 
-                        src="/lishba-3.jpeg" 
-                        alt="Alishba Iqbal" 
+                      <img
+                        src="/rabeea.jpg"
+                        alt="Rabeea"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <h3 className="text-lg md:text-xl font-bold text-card-foreground mb-2 min-h-[3.5rem] flex items-center justify-center">
+                      Rabeea
+                    </h3>
+                    <p className="text-primary font-semibold mb-3 text-sm md:text-base min-h-[2.5rem] flex items-center justify-center">
+                      Social Media Coordinator
+                    </p>
+                    <p className="text-muted-foreground text-sm leading-relaxed min-h-[3rem]">
+                      Drives awareness campaigns through creative social media trends and analytics.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Team Member 5 - Alishba */}
+              <div className="group w-full max-w-sm mx-auto">
+                <Card className="h-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                  <CardContent className="pt-8 pb-6 px-4 text-center">
+                    <div className="w-32 h-32 rounded-full mx-auto mb-6 ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all overflow-hidden flex-shrink-0">
+                      <img
+                        src="/lishba-3.jpeg"
+                        alt="Alishba Iqbal"
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -196,6 +196,30 @@ export function AboutSection() {
                     </p>
                     <p className="text-muted-foreground text-sm leading-relaxed min-h-[3rem]">
                       Manages digital presence, website content, and communication strategy.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Team Member 6 - Irsa */}
+              <div className="group w-full max-w-sm mx-auto">
+                <Card className="h-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                  <CardContent className="pt-8 pb-6 px-4 text-center">
+                    <div className="w-32 h-32 rounded-full mx-auto mb-6 ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all overflow-hidden flex-shrink-0">
+                      <img
+                        src="/irsa.jpeg"
+                        alt="Irsa Bukhari"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <h3 className="text-lg md:text-xl font-bold text-card-foreground mb-2 min-h-[3.5rem] flex items-center justify-center">
+                      Irsa Bukhari
+                    </h3>
+                    <p className="text-primary font-semibold mb-3 text-sm md:text-base min-h-[2.5rem] flex items-center justify-center">
+                      Media Secretary
+                    </p>
+                    <p className="text-muted-foreground text-sm leading-relaxed min-h-[3rem]">
+                      Handles media relations, digital content creation, and public awareness campaigns.
                     </p>
                   </CardContent>
                 </Card>

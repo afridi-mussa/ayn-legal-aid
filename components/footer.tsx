@@ -20,8 +20,7 @@ export function Footer() {
               <span className="text-lg font-bold text-card-foreground">Ayn Legal Aid & Club</span>
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              Professional legal services, non-profit advocacy, and university club network dedicated to making justice
-              accessible for all.
+              Professional legal services a nationwide lawyers’ nexus and student representatives across educational institutes. Empowering communities throughout Pakistan with accessible, reliable legal support.
             </p>
           </div>
 
@@ -84,14 +83,7 @@ export function Footer() {
                 <Phone className="w-4 h-4" />
                 +92 339 3383379
               </li>
-              <li className="flex items-start gap-2 text-muted-foreground text-sm">
-                <MapPin className="w-4 h-4 mt-0.5" />
-                <span>
-                  123 Legal Plaza, Main Boulevard
-                  <br />
-                  Lahore, Punjab, Pakistan
-                </span>
-              </li>
+              
             </ul>
           </div>
         </div>
@@ -106,7 +98,7 @@ export function Footer() {
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary transition-colors"
               >
-                
+
               </a>
             </div>
           </div>

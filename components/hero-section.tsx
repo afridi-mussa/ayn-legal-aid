@@ -20,20 +20,16 @@ export function HeroSection() {
             Justice for <span className="text-primary">All</span>
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto text-pretty">
-            Professional legal services, non-profit advocacy, and a nationwide university club network. Empowering
-            communities across Pakistan through accessible legal aid.
+            Professional legal services a nationwide lawyers’ nexus and student representatives across educational institutes. Empowering communities throughout Pakistan with accessible, reliable legal support.
           </p>
 
           {/* Student Ambassador Section */}
           <div className="mb-12 max-w-4xl mx-auto">
             <div className="flex flex-col items-center mb-6">
               <Users className="w-12 h-12 text-primary mb-4" />
-              <div className="text-2xl font-bold text-foreground mb-3">Student Ambassadors</div>
+              <div className="text-2xl font-bold text-foreground mb-3">Nationwide Lawyers Nexus</div>
               <div className="text-muted-foreground text-center mb-4 max-w-3xl">
-                Our dedicated university ambassadors serve as the bridge between communities and legal aid, 
-                organizing awareness campaigns, facilitating access to legal resources, and building a network 
-                of support across campuses nationwide. They play a crucial role in making justice accessible 
-                to all, one campus at a time.
+                Coming Soon!
               </div>
             </div>
           </div>
