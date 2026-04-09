@@ -13,6 +13,7 @@ const nextConfig = {
   experimental: {
     forceSwcTransforms: true,
   },
+  output: 'export',
 }
 
 export default nextConfig

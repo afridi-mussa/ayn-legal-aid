@@ -54,6 +54,12 @@ export function Navigation() {
                 >
                   Cyber Analysis
                 </Link>
+                <Link
+                  href="/tax-advisory"
+                  className="block px-4 py-2 text-foreground hover:bg-primary/10 transition-colors"
+                >
+                  Tax Advisory & Filing
+                </Link>
               </div>
             </div>
 
@@ -116,6 +122,13 @@ export function Navigation() {
                       onClick={() => setIsOpen(false)}
                     >
                       Cyber Analysis
+                    </Link>
+                    <Link
+                      href="/tax-advisory"
+                      className="block px-3 py-2 text-foreground hover:text-primary transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Tax Advisory & Filing
                     </Link>
                   </div>
                 )}
