@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Footer } from "@/components/footer";
-import { Navigation } from "@/components/navigation";
+
 
 export default function TaxCalculator() {
   const [monthlyIncome, setMonthlyIncome] = useState<number>(0);
@@ -71,7 +71,7 @@ export default function TaxCalculator() {
 
   return (
     <main className="min-h-screen bg-background">
-      <Navigation />
+      
 
       {/* Hero Section */}
       <section className="pt-24 pb-16 bg-background text-center">
