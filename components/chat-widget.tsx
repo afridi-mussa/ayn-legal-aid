@@ -12,6 +12,7 @@ type ChatMessage = {
 const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY
 const client = new Groq({
   apiKey: process.env.NEXT_PUBLIC_GROQ_API_KEY!,
+  // <-- your Vercel URL
   dangerouslyAllowBrowser: true,
 })
 
