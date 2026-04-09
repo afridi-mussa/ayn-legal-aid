@@ -166,7 +166,7 @@ export function AboutSection() {
                     <h3 className="text-lg font-bold mb-2">Alishba Iqbal</h3>
                     <p className="text-primary font-semibold mb-2">Web & Content Coordinator</p>
                     <p className="text-muted-foreground text-sm">
-                      Manages digital presence and content.
+                      Manages digital presence, website content, and communication strategy.
                     </p>
                   </CardContent>
                 </Card>
@@ -182,7 +182,7 @@ export function AboutSection() {
                     <h3 className="text-lg font-bold mb-2">Syed Mussa Ali</h3>
                     <p className="text-primary font-semibold mb-2">Full Stack  Developer</p>
                     <p className="text-muted-foreground text-sm">
-                      Builds and maintains complete web applications, scalable systems, and modern digital solutions.
+                      Builds and maintains complete web applications, and modern digital solutions.
                     </p>
                   </CardContent>
                 </Card>
@@ -201,7 +201,7 @@ export function AboutSection() {
                     <h3 className="text-lg font-bold mb-2">Rabeea</h3>
                     <p className="text-primary font-semibold mb-2">Social Media Coordinator</p>
                     <p className="text-muted-foreground text-sm">
-                      Drives awareness campaigns.
+                      Drives awareness campaigns through creative social media trends and analytics.
                     </p>
                   </CardContent>
                 </Card>
@@ -217,7 +217,7 @@ export function AboutSection() {
                     <h3 className="text-lg font-bold mb-2">Irsa Bukhari</h3>
                     <p className="text-primary font-semibold mb-2">Media Secretary</p>
                     <p className="text-muted-foreground text-sm">
-                      Handles media & public campaigns.
+                      Handles media relations, digital content creation, and public awareness campaigns.
                     </p>
                   </CardContent>
                 </Card>

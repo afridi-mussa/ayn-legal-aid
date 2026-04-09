@@ -72,7 +72,7 @@ export default function CompanyRegistrationPage() {
             SECP Registration • Corporate Compliance • Business Structuring
           </p>
           <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto">
-            From Pvt Ltd to Foreign Company setup — complete end-to-end corporate solutions in Pakistan.
+            From Pvt Ltd to Foreign Company setup complete end-to-end corporate solutions in Pakistan.
           </p>
         </div>
       </section>
