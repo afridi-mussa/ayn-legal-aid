@@ -61,13 +61,15 @@ export function Footer() {
 
           {/* Services */}
           <div>
-            <h4 className="font-semibold text-card-foreground mb-4">Legal Services</h4>
+            <h4 className="font-semibold text-card-foreground mb-4">Services</h4>
             <ul className="space-y-2">
               <li className="text-muted-foreground text-sm">Family Law</li>
               <li className="text-muted-foreground text-sm">Property Law</li>
               <li className="text-muted-foreground text-sm">Corporate Law</li>
               <li className="text-muted-foreground text-sm">Criminal Defense</li>
               <li className="text-muted-foreground text-sm">Pro Bono Services</li>
+              <li className="text-muted-foreground text-sm">Taxation Law</li>
+              <li className="text-muted-foreground text-sm">Cyber Analysis</li>
             </ul>
           </div>
 
@@ -77,7 +79,7 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-muted-foreground text-sm">
                 <Mail className="w-4 h-4" />
-                info@aynlegalaid.com
+                aynlegalaid.club@gmail.com
               </li>
               <li className="flex items-center gap-2 text-muted-foreground text-sm">
                 <Phone className="w-4 h-4" />

@@ -143,7 +143,7 @@ export default function CompanyRegistrationPage() {
         <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">Ready to Register Your Company?</h2>
         <p className="text-xl text-muted-foreground mb-8">Get expert guidance and complete support from Ayn Legal Aid & Club</p>
         <Button size="lg" className="bg-primary hover:bg-primary/90 text-white rounded-2xl px-12 py-5">
-          <Link href="https://aynlegalaid.com/contact">Book Your Free Consultation Now</Link>
+          <Link href="/contact">Book Your Free Consultation Now</Link>
         </Button>
       </section>
 

@@ -55,15 +55,10 @@ Thank you,`)
                       onClick={handleEmailClick}
                       className="text-primary hover:text-primary/80 underline transition-colors"
                     >
-                      info@aynlegalaid.com
+                      aynlegalaid.club@gmail.com
                     </button>
                     <br />
-                    <button
-                      onClick={handleSupportEmailClick}
-                      className="text-primary hover:text-primary/80 underline transition-colors"
-                    >
-                      support@aynlegalaid.com
-                    </button>
+                    
                   </div>
                 </div>
 

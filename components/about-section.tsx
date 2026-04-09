@@ -151,75 +151,73 @@ export function AboutSection() {
               </div>
             </div>
 
-            {/* Second Row - 3 Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mt-6 md:mt-8">
-              {/* Team Member 4 - Rabeea */}
+
+
+
+            {/* Second Row - 2 Cards CENTERED */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 mt-6 md:mt-8 max-w-4xl mx-auto">
+              {/* Team Member 4 - Alishba */}
               <div className="group w-full max-w-sm mx-auto">
                 <Card className="h-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                   <CardContent className="pt-8 pb-6 px-4 text-center">
-                    <div className="w-32 h-32 rounded-full mx-auto mb-6 ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all overflow-hidden flex-shrink-0">
-                      <img
-                        src="/rabeea.jpg"
-                        alt="Rabeea"
-                        className="w-full h-full object-cover"
-                      />
+                    <div className="w-32 h-32 rounded-full mx-auto mb-6 ring-2 ring-primary/20 group-hover:ring-primary/40 overflow-hidden">
+                      <img src="/lishba-3.jpeg" className="w-full h-full object-cover" />
                     </div>
-                    <h3 className="text-lg md:text-xl font-bold text-card-foreground mb-2 min-h-[3.5rem] flex items-center justify-center">
-                      Rabeea
-                    </h3>
-                    <p className="text-primary font-semibold mb-3 text-sm md:text-base min-h-[2.5rem] flex items-center justify-center">
-                      Social Media Coordinator
-                    </p>
-                    <p className="text-muted-foreground text-sm leading-relaxed min-h-[3rem]">
-                      Drives awareness campaigns through creative social media trends and analytics.
+                    <h3 className="text-lg font-bold mb-2">Alishba Iqbal</h3>
+                    <p className="text-primary font-semibold mb-2">Web & Content Coordinator</p>
+                    <p className="text-muted-foreground text-sm">
+                      Manages digital presence and content.
                     </p>
                   </CardContent>
                 </Card>
               </div>
 
-              {/* Team Member 5 - Alishba */}
+              {/* Team Member 5 - Mussa */}
               <div className="group w-full max-w-sm mx-auto">
                 <Card className="h-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                   <CardContent className="pt-8 pb-6 px-4 text-center">
-                    <div className="w-32 h-32 rounded-full mx-auto mb-6 ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all overflow-hidden flex-shrink-0">
-                      <img
-                        src="/lishba-3.jpeg"
-                        alt="Alishba Iqbal"
-                        className="w-full h-full object-cover"
-                      />
+                    <div className="w-32 h-32 rounded-full mx-auto mb-6 ring-2 ring-primary/20 group-hover:ring-primary/40 overflow-hidden">
+                      <img src="/syed-mussa12.jpeg" className="w-full h-full object-cover" />
                     </div>
-                    <h3 className="text-lg md:text-xl font-bold text-card-foreground mb-2 min-h-[3.5rem] flex items-center justify-center">
-                      Alishba Iqbal
-                    </h3>
-                    <p className="text-primary font-semibold mb-3 text-sm md:text-base min-h-[2.5rem] flex items-center justify-center">
-                      Web & Content Coordinator
+                    <h3 className="text-lg font-bold mb-2">Syed Mussa Ali</h3>
+                    <p className="text-primary font-semibold mb-2">Full Stack  Developer</p>
+                    <p className="text-muted-foreground text-sm">
+                      Builds and maintains complete web applications, scalable systems, and modern digital solutions.
                     </p>
-                    <p className="text-muted-foreground text-sm leading-relaxed min-h-[3rem]">
-                      Manages digital presence, website content, and communication strategy.
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+
+            {/* Third Row - 2 Cards CENTERED */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 mt-6 md:mt-8 max-w-4xl mx-auto">
+              {/* Rabeea */}
+              <div className="group w-full max-w-sm mx-auto">
+                <Card className="h-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                  <CardContent className="pt-8 pb-6 px-4 text-center">
+                    <div className="w-32 h-32 rounded-full mx-auto mb-6 ring-2 ring-primary/20 group-hover:ring-primary/40 overflow-hidden">
+                      <img src="/rabeea.jpg" className="w-full h-full object-cover" />
+                    </div>
+                    <h3 className="text-lg font-bold mb-2">Rabeea</h3>
+                    <p className="text-primary font-semibold mb-2">Social Media Coordinator</p>
+                    <p className="text-muted-foreground text-sm">
+                      Drives awareness campaigns.
                     </p>
                   </CardContent>
                 </Card>
               </div>
 
-              {/* Team Member 6 - Irsa */}
+              {/* Irsa */}
               <div className="group w-full max-w-sm mx-auto">
                 <Card className="h-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                   <CardContent className="pt-8 pb-6 px-4 text-center">
-                    <div className="w-32 h-32 rounded-full mx-auto mb-6 ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all overflow-hidden flex-shrink-0">
-                      <img
-                        src="/irsa.jpeg"
-                        alt="Irsa Bukhari"
-                        className="w-full h-full object-cover"
-                      />
+                    <div className="w-32 h-32 rounded-full mx-auto mb-6 ring-2 ring-primary/20 group-hover:ring-primary/40 overflow-hidden">
+                      <img src="/irsa.jpeg" className="w-full h-full object-cover" />
                     </div>
-                    <h3 className="text-lg md:text-xl font-bold text-card-foreground mb-2 min-h-[3.5rem] flex items-center justify-center">
-                      Irsa Bukhari
-                    </h3>
-                    <p className="text-primary font-semibold mb-3 text-sm md:text-base min-h-[2.5rem] flex items-center justify-center">
-                      Media Secretary
-                    </p>
-                    <p className="text-muted-foreground text-sm leading-relaxed min-h-[3rem]">
-                      Handles media relations, digital content creation, and public awareness campaigns.
+                    <h3 className="text-lg font-bold mb-2">Irsa Bukhari</h3>
+                    <p className="text-primary font-semibold mb-2">Media Secretary</p>
+                    <p className="text-muted-foreground text-sm">
+                      Handles media & public campaigns.
                     </p>
                   </CardContent>
                 </Card>
@@ -228,6 +226,6 @@ export function AboutSection() {
           </div>
         </div>
       </div>
-    </section>
+    </section >
   )
 }
