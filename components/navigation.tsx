@@ -60,6 +60,13 @@ export function Navigation() {
                 >
                   Tax Advisory & Filing
                 </Link>
+                <Link
+                      href="/corporate-law"
+                      className="block px-3 py-2 text-foreground hover:text-primary transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Corporate law & Advisory
+                    </Link>
               </div>
             </div>
 
@@ -128,7 +135,14 @@ export function Navigation() {
                       className="block px-3 py-2 text-foreground hover:text-primary transition-colors"
                       onClick={() => setIsOpen(false)}
                     >
-                      Tax Advisory & Filing
+                      Corporate Law & Advisory
+                    </Link>
+                    <Link
+                      href="/corporate-law"
+                      className="block px-3 py-2 text-foreground hover:text-primary transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Corporate law & Advisory
                     </Link>
                   </div>
                 )}
