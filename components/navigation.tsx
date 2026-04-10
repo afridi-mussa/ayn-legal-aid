@@ -135,7 +135,7 @@ export function Navigation() {
                       className="block px-3 py-2 text-foreground hover:text-primary transition-colors"
                       onClick={() => setIsOpen(false)}
                     >
-                      Corporate Law & Advisory
+                      Tax Advisory and Filing
                     </Link>
                     <Link
                       href="/corporate-law"
