@@ -44,8 +44,8 @@ export function AboutSection() {
           <Card className="text-center p-6 hover:shadow-lg transition-shadow">
             <CardContent className="pt-6">
               <Heart className="w-12 h-12 text-primary mx-auto mb-4" />
-              <h4 className="text-lg font-semibold text-card-foreground mb-2">Non-Profit</h4>
-              <p className="text-muted-foreground text-sm">Community advocacy and free legal aid for those in need</p>
+              <h4 className="text-lg font-semibold text-card-foreground mb-2">Free Legal Advice</h4>
+              <p className="text-muted-foreground text-sm">Offering free legal consultation to ensure everyone has access to basic legal support.</p>
             </CardContent>
           </Card>
 
