@@ -1,14 +1,23 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Menu, X, ExternalLink, ChevronDown } from "lucide-react"
+import { Menu, X, ExternalLink, ChevronDown, LogOut } from "lucide-react"
+import { useAuth } from "@/components/auth-provider"
+import { ProfileMenu } from "@/components/profile-menu"
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false) // mobile dropdown
+  const { user, loading, signOut } = useAuth()
+
+  // Only render auth-dependent UI after mounting in the browser, so the
+  // server HTML and the first client render match (avoids hydration errors).
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  const ready = mounted && !loading
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-background/95 backdrop-blur-sm border-b border-border">
@@ -76,10 +85,20 @@ export function Navigation() {
             <Link href="/contact" className="text-foreground hover:text-primary transition-colors">
               Contact
             </Link>
-         
+
+            {/* Auth controls (desktop) */}
+            {ready && (
+              user ? (
+                <ProfileMenu />
+              ) : (
+                <Link href="/login">
+                  <Button size="sm">Log in</Button>
+                </Link>
+              )
+            )}
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile: menu button */}
           <div className="md:hidden">
             <Button variant="ghost" size="sm" onClick={() => setIsOpen(!isOpen)}>
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -91,6 +110,13 @@ export function Navigation() {
         {isOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 bg-card border-t border-border">
+              {/* Profile at the top when logged in */}
+              {ready && user && (
+                <div className="mb-2 pb-2 border-b border-border">
+                  <ProfileMenu variant="row" />
+                </div>
+              )}
+
               <Link
                 href="/"
                 className="block px-3 py-2 text-foreground hover:text-primary transition-colors"
@@ -162,9 +188,29 @@ export function Navigation() {
               >
                 Contact
               </Link>
-              <div className="px-3 py-2">
-               
-              </div>
+
+              {/* Auth controls (mobile) */}
+              {ready && !user && (
+                <div className="px-3 py-2 border-t border-border mt-2">
+                  <Link href="/login" onClick={() => setIsOpen(false)}>
+                    <Button size="sm" className="w-full">Log in</Button>
+                  </Link>
+                </div>
+              )}
+              {ready && user && (
+                <div className="px-3 py-2 border-t border-border mt-2">
+                  <Button
+                    size="sm"
+                    className="w-full bg-red-600 text-white hover:bg-red-700 active:bg-red-800 transition-all"
+                    onClick={() => {
+                      signOut()
+                      setIsOpen(false)
+                    }}
+                  >
+                    <LogOut className="h-4 w-4 mr-2" /> Log out
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         )}

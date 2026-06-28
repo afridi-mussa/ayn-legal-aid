@@ -2,19 +2,25 @@
 
 import { useEffect, useRef, useState } from "react"
 import { Bot, X, Minimize2, Maximize2, Send } from "lucide-react"
-import Groq from "groq-sdk"
+import { getSupabase, isSupabaseConfigured } from "@/lib/supabase/client"
 
 type ChatMessage = {
   role: "user" | "assistant"
   content: string
 }
 
-const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY
-const client = new Groq({
-  apiKey: process.env.NEXT_PUBLIC_GROQ_API_KEY!,
-  // <-- your Vercel URL
-  dangerouslyAllowBrowser: true,
-})
+// Escape HTML first so message content can't inject markup/scripts (XSS),
+// then apply light formatting (line breaks + simple list bullets).
+function formatMessage(raw: string): string {
+  const escaped = raw
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+  return escaped
+    .replace(/\n/g, "<br>")
+    .replace(/•\s/g, '<li class="ml-4">• ')
+    .replace(/(\d+\.\s)/g, '<li class="ml-4">$1')
+}
 
 export function ChatWidget() {
   const [open, setOpen] = useState(false)
@@ -47,30 +53,40 @@ export function ChatWidget() {
     setError(null)
 
     try {
-      const completion = await client.chat.completions.create({
-        model: "llama-3.1-8b-instant",
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are Insaf Legal AI. Respond professionally like a lawyer, addressing queries and questions with legal precision. Provide only factual legal information based on established laws and regulations. Do not give opinions or general advice - stick to legal principles and statutes.",
-          },
-          ...nextMessages,
-        ],
-        temperature: 0.3,
+      if (!isSupabaseConfigured) {
+        throw new Error("Chat is not configured yet.")
+      }
+
+      const supabase = getSupabase()
+      const { data, error: fnError } = await supabase.functions.invoke("chat", {
+        body: { messages: nextMessages },
       })
+
+      if (fnError) {
+        // Surface the real reason (the function's JSON body lives in .context).
+        let detail = fnError.message
+        const ctx = (fnError as { context?: Response }).context
+        try {
+          if (ctx && typeof ctx.json === "function") {
+            const body = await ctx.json()
+            if (body?.error) detail = body.error
+          }
+        } catch {
+          /* ignore */
+        }
+        throw new Error(detail)
+      }
 
       const assistantMessage: ChatMessage = {
         role: "assistant",
-        content:
-          completion.choices[0]?.message?.content ??
-          "I could not generate a response.",
+        content: data?.reply ?? data?.error ?? "I could not generate a response.",
       }
 
       setMessages((prev) => [...prev, assistantMessage])
     } catch (err) {
-      setError("Something went wrong. Please try again.")
-      console.error(err)
+      const msg = err instanceof Error ? err.message : "Something went wrong. Please try again."
+      setError(msg)
+      console.error("chat error:", err)
     } finally {
       setLoading(false)
     }
@@ -144,29 +160,17 @@ export function ChatWidget() {
                 {message.role === "assistant" && index === 0 ? (
                   <>
                     <p className="mb-1 text-[10px] font-semibold text-emerald-300">
-                      Insaf Legal AI assistant (bot, not a lawyer)
+                      Ayn Legal AI assistant (bot, not a lawyer)
                     </p>
                     <div
                       className="prose prose-invert prose-xs max-w-none"
-                      dangerouslySetInnerHTML={{
-                        __html: message.content
-                          .replace(/\n/g, '<br>')
-                          .replace(/•\s/g, '<li>• ')
-                          .replace(/(\d+\.\s)/g, '<li>$1')
-                          .replace(/<li>/g, '<li class="ml-4">')
-                      }}
+                      dangerouslySetInnerHTML={{ __html: formatMessage(message.content) }}
                     />
                   </>
                 ) : (
                   <div
                     className="prose prose-invert prose-xs max-w-none"
-                    dangerouslySetInnerHTML={{
-                      __html: message.content
-                        .replace(/\n/g, '<br>')
-                        .replace(/•\s/g, '<li>• ')
-                        .replace(/(\d+\.\s)/g, '<li>$1')
-                        .replace(/<li>/g, '<li class="ml-4">')
-                    }}
+                    dangerouslySetInnerHTML={{ __html: formatMessage(message.content) }}
                   />
                 )}
               </div>
