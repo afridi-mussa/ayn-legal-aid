@@ -152,14 +152,41 @@ temporary login role through the Management API, so **no DB password was needed*
 | "how do I recall a legal notice?" | Real AI answer — old contact-hijack bug is fixed |
 | "how can i contact a lawyer" | Contact shortcut, no Groq call |
 
+## Hostinger deploy — DONE and verified (2026-08-02)
+
+Hostinger no longer uses the classic File Manager; it is now **File Browser v2.63**, which
+has **no "show hidden files" toggle and no zip Extract**. Dotfiles are shown by default.
+Upload method that worked: select all of `out/` in Windows Explorer and drag it into the
+File Browser window, overwriting in place (no delete-first, so there was no downtime).
+
+Note: Hostinger puts a CDN in front (`Server: hcdn`) and injects its own minimal
+`content-security-policy: upgrade-insecure-requests`. Our `.htaccess` CSP **replaces** it
+cleanly — no conflict. Purge the CDN cache after a deploy or stale pages keep serving.
+
+Verified live against https://aynlegalaid.com:
+
+| Check | Result |
+|---|---|
+| `last-modified` | 02 Aug 2026 — fresh upload |
+| CSP / X-Frame-Options / HSTS / nosniff / Referrer / Permissions | all applied |
+| `http://` → `https://` | 301 |
+| `/this-page-does-not-exist/` | 404 |
+| New JS bundle (`ayn_guest_id` in chunks) | present |
+| `@vercel/analytics` in bundle | gone |
+
 ## Current state
 
-Supabase side is **fully live**. Frontend is built and waiting in `out/`.
+**Everything is live**: Supabase migrations, hardened `chat` v3, and the frontend on
+Hostinger. Front end and back end are in sync.
 
-## Immediate next steps
+## Remaining
 
-1. Upload `out/` to Hostinger `public_html`, **including the hidden `.htaccess`**.
-2. Commit + push (`CLAUDE.md`, `memory.md`, `.htaccess`, migrations, `config.toml` untracked).
+1. **Groq key rotation** — still outstanding by founder's choice (no console access).
+2. Password-recovery hardening (deferred).
+3. Founder should walk the real UI once: 3 guest prompts → sign-up wall → sign up → unlimited.
+   Only the API was tested from here, not the rendered widget.
+4. Two throwaway guest rows sit in `chat_usage` from live testing.
+5. Optional: GitHub Action to build + FTP on push, replacing the manual drag-and-drop.
 
 ## Deliberately deferred (founder's call, 2026-08-02)
 
