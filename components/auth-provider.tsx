@@ -174,8 +174,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!user) return { error: "Not logged in" }
     try {
       const supabase = getSupabase()
-      const { error } = await supabase.from("profiles").update({ username }).eq("id", user.id)
-      if (error) return { error: error.message }
+      const trimmed = username.trim()
+      const { error } = await supabase
+        .from("profiles")
+        // Store blank as NULL so it doesn't collide with other blanks in the
+        // case-insensitive unique index.
+        .update({ username: trimmed === "" ? null : trimmed })
+        .eq("id", user.id)
+      if (error) {
+        // 23505 = unique violation on profiles_username_lower_key.
+        if (error.code === "23505") return { error: "That username is already taken." }
+        return { error: error.message }
+      }
       await loadProfile(user.id)
       return { error: null }
     } catch (e) {
@@ -188,7 +198,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const supabase = getSupabase()
       const ext = file.name.split(".").pop()?.toLowerCase() || "jpg"
-      const path = `${user.id}/avatar_${Date.now()}.${ext}`
+      const fileName = `avatar_${Date.now()}.${ext}`
+      const path = `${user.id}/${fileName}`
 
       const { error: uploadError } = await supabase.storage
         .from("avatars")
@@ -203,6 +214,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .update({ avatar_url: publicUrl })
         .eq("id", user.id)
       if (updateError) return { error: updateError.message }
+
+      // Only once the profile points at the new file, bin the old ones. Doing
+      // it in this order means a failure here leaves a stray file rather than a
+      // broken avatar. Storage RLS scopes deletes to this user's own folder.
+      try {
+        const { data: existing } = await supabase.storage.from("avatars").list(user.id)
+        const stale = (existing ?? [])
+          .filter((f) => f.name !== fileName)
+          .map((f) => `${user.id}/${f.name}`)
+        if (stale.length > 0) await supabase.storage.from("avatars").remove(stale)
+      } catch {
+        /* cleanup is best-effort — never fail the upload over it */
+      }
 
       await loadProfile(user.id)
       return { error: null }

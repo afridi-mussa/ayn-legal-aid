@@ -1,0 +1,112 @@
+# ============================================================
+# Build the static export and upload it to Hostinger over FTP.
+#
+# Runs on every push to main, and can be triggered by hand from the
+# Actions tab (Run workflow).
+#
+# REQUIRED REPOSITORY SECRETS
+#   Settings > Secrets and variables > Actions > New repository secret
+#
+#   NEXT_PUBLIC_SUPABASE_URL       same value as in .env.local
+#   NEXT_PUBLIC_SUPABASE_ANON_KEY  same value as in .env.local
+#   FTP_SERVER                     e.g. ftp.aynlegalaid.com  (hPanel > Files > FTP Accounts)
+#   FTP_USERNAME                   e.g. u419952466.aynlegalaid.com
+#   FTP_PASSWORD                   the FTP account password
+#
+# The two NEXT_PUBLIC_* values are baked into the browser bundle at build
+# time. Without them the deployed site builds "unconfigured" and both auth
+# and chat silently stop working — that is why the guard step below fails
+# loudly rather than shipping a broken site.
+#
+# NOTE: Hostinger serves through a CDN. After a deploy, purge the cache in
+# hPanel (Websites > aynlegalaid.com > Performance) or old pages keep serving.
+# ============================================================
+
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Never let two deploys race each other onto the same server.
+concurrency:
+  group: hostinger-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Fail early if any secret is missing
+        env:
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_ANON: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          missing=""
+          [ -z "$SUPABASE_URL" ]  && missing="$missing NEXT_PUBLIC_SUPABASE_URL"
+          [ -z "$SUPABASE_ANON" ] && missing="$missing NEXT_PUBLIC_SUPABASE_ANON_KEY"
+          [ -z "$FTP_SERVER" ]    && missing="$missing FTP_SERVER"
+          [ -z "$FTP_USERNAME" ]  && missing="$missing FTP_USERNAME"
+          [ -z "$FTP_PASSWORD" ]  && missing="$missing FTP_PASSWORD"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing repository secrets:$missing"
+            echo "Add them under Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+          echo "All required secrets are present."
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Build static export
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        run: npm run build
+
+      - name: Sanity-check the build output
+        run: |
+          test -f out/index.html  || { echo "::error::out/index.html missing"; exit 1; }
+          test -f out/404.html    || { echo "::error::out/404.html missing"; exit 1; }
+          test -f out/.htaccess   || { echo "::error::out/.htaccess missing — security headers would be lost"; exit 1; }
+          # The bundle must never contain a Groq key or the service_role key.
+          if grep -rqE "gsk_[A-Za-z0-9]|service_role" out/; then
+            echo "::error::A secret was found in the build output. Deploy aborted."
+            exit 1
+          fi
+          echo "Build output looks good ($(find out -type f | wc -l) files)."
+
+      - name: Upload to Hostinger
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./out/
+          server-dir: public_html/
+          # Keeps SSL renewal files and the action's own sync state intact.
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.well-known/**
+
+      - name: Done
+        run: echo "Deployed. Remember to purge the Hostinger CDN cache if pages look stale."

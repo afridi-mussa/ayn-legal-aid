@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import { LogOut, Camera, Loader2, Check } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 import { Button } from "@/components/ui/button"
@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { USERNAME_MAX, usernameError } from "@/lib/validation"
 
 function initials(name?: string | null, email?: string | null) {
   const src = (name || email || "U").trim()
@@ -48,7 +49,11 @@ export function ProfileMenu({ variant = "icon" }: { variant?: "icon" | "row" }) 
     ? new Date(profile.created_at).toLocaleDateString(undefined, { year: "numeric", month: "long" })
     : "—"
 
+  const nameError = useMemo(() => usernameError(username), [username])
+  const nameUnchanged = username.trim() === (profile?.username ?? "")
+
   async function handleSaveName() {
+    if (nameError) return
     setError(null)
     setSavingName(true)
     const { error } = await updateUsername(username.trim())
@@ -157,12 +162,15 @@ export function ProfileMenu({ variant = "icon" }: { variant?: "icon" | "row" }) 
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Choose a username"
-                maxLength={32}
+                maxLength={USERNAME_MAX}
+                aria-invalid={!!nameError}
+                className={nameError ? "border-red-500 focus-visible:ring-red-500/40" : ""}
               />
-              <Button onClick={handleSaveName} disabled={savingName || username.trim() === (profile?.username ?? "")}>
+              <Button onClick={handleSaveName} disabled={savingName || nameUnchanged || !!nameError}>
                 {savingName ? <Loader2 className="h-4 w-4 animate-spin" /> : nameSaved ? <Check className="h-4 w-4" /> : "Save"}
               </Button>
             </div>
+            {nameError && <p className="text-xs text-red-400">{nameError}</p>}
           </div>
 
           {/* Stats */}
