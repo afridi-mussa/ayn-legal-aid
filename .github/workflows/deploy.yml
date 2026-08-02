@@ -99,7 +99,15 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          # Explicit FTPS over port 21. Plain "ftp" would send the password in
+          # clear text. If Hostinger ever rejects the TLS handshake, change this
+          # to "ftp" — but try "ftps-legacy" first before giving up encryption.
+          protocol: ftps
+          port: 21
           local-dir: ./out/
+          # The main FTP account (u419952466) logs in at the account home, so
+          # the site lives one level down. A per-site FTP account rooted at
+          # /public_html would need this set to ./ instead.
           server-dir: public_html/
           # Keeps SSL renewal files and the action's own sync state intact.
           exclude: |
