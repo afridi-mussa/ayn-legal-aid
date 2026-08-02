@@ -81,6 +81,9 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: npm run build
 
+      - name: Stamp the build so the deploy can be verified
+        run: echo "$GITHUB_SHA" > out/build-id.txt
+
       - name: Sanity-check the build output
         run: |
           test -f out/index.html  || { echo "::error::out/index.html missing"; exit 1; }
@@ -105,10 +108,13 @@ jobs:
           protocol: ftps
           port: 21
           local-dir: ./out/
-          # The main FTP account (u419952466) logs in at the account home, so
-          # the site lives one level down. A per-site FTP account rooted at
-          # /public_html would need this set to ./ instead.
-          server-dir: public_html/
+          # The main FTP account logs in at the ACCOUNT HOME (/home/u419952466),
+          # not at the site folder. On this plan the document root for the
+          # domain is domains/<domain>/public_html — plain "public_html/" is a
+          # different directory that is not served, and uploading there fails
+          # silently (the deploy reports success, the site never changes).
+          # A per-site FTP account is rooted at the docroot, so it would use ./
+          server-dir: domains/aynlegalaid.com/public_html/
           # Keeps SSL renewal files and the action's own sync state intact.
           exclude: |
             **/.git*
@@ -116,5 +122,21 @@ jobs:
             **/node_modules/**
             **/.well-known/**
 
+      # Uploading to the wrong server-dir still reports success, so confirm the
+      # live site is actually serving THIS commit before calling it a deploy.
+      - name: Verify the live site is serving this build
+        run: |
+          sleep 10
+          live=$(curl -sS --max-time 30 "https://aynlegalaid.com/build-id.txt?cb=$GITHUB_RUN_ID" | tr -d '[:space:]')
+          echo "expected: $GITHUB_SHA"
+          echo "live:     $live"
+          if [ "$live" != "$GITHUB_SHA" ]; then
+            echo "::error::The live site is NOT serving this build."
+            echo "Most likely server-dir points at the wrong folder, or the CDN is caching."
+            echo "Check the document root in hPanel and the server-dir value in this workflow."
+            exit 1
+          fi
+          echo "Confirmed: aynlegalaid.com is serving $GITHUB_SHA"
+
       - name: Done
-        run: echo "Deployed. Remember to purge the Hostinger CDN cache if pages look stale."
+        run: echo "Deployed and verified. Purge the Hostinger CDN cache if pages still look stale."
