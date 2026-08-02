@@ -1,12 +1,41 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { Bot, X, Minimize2, Maximize2, Send } from "lucide-react"
+import Link from "next/link"
+import { Bot, X, Minimize2, Maximize2, Send, Lock } from "lucide-react"
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase/client"
+import { useAuth } from "@/components/auth-provider"
 
 type ChatMessage = {
   role: "user" | "assistant"
   content: string
+}
+
+// Logged-out visitors get this many prompts. Kept in sync with
+// GUEST_PROMPT_LIMIT in supabase/functions/chat/index.ts. The server is the
+// real gate — this constant only drives the on-screen counter.
+const GUEST_PROMPT_LIMIT = 3
+const GUEST_ID_KEY = "ayn_guest_id"
+
+/** Stable per-browser id so the server can count a guest's free prompts. */
+function getGuestId(): string {
+  if (typeof window === "undefined") return ""
+  try {
+    let id = window.localStorage.getItem(GUEST_ID_KEY)
+    if (!id) {
+      id =
+        typeof crypto !== "undefined" && "randomUUID" in crypto
+          ? crypto.randomUUID()
+          : `${Date.now().toString(16)}-xxxx-4xxx-yxxx-xxxxxxxxxxxx`.replace(/[xy]/g, (c) => {
+              const r = (Math.random() * 16) | 0
+              return (c === "x" ? r : (r & 0x3) | 0x8).toString(16)
+            })
+      window.localStorage.setItem(GUEST_ID_KEY, id)
+    }
+    return id
+  } catch {
+    return ""
+  }
 }
 
 // Escape HTML first so message content can't inject markup/scripts (XSS),
@@ -40,9 +69,31 @@ export function ChatWidget() {
   const [error, setError] = useState<string | null>(null)
   const messagesContainerRef = useRef<HTMLDivElement | null>(null)
 
+  const { user } = useAuth()
+  const [guestId, setGuestId] = useState("")
+  const [remaining, setRemaining] = useState<number | null>(null)
+  const [gateHit, setGateHit] = useState(false)
+
+  // localStorage is only available in the browser, so read it after mount.
+  useEffect(() => {
+    setGuestId(getGuestId())
+  }, [])
+
+  // Signing in lifts the guest limit immediately.
+  useEffect(() => {
+    if (user) {
+      setGateHit(false)
+      setRemaining(null)
+      setError(null)
+    }
+  }, [user])
+
+  const isGuest = !user
+  const locked = isGuest && gateHit
+
   async function handleSend(e: React.FormEvent) {
     e.preventDefault()
-    if (!input.trim() || loading) return
+    if (!input.trim() || loading || locked) return
 
     const userMessage: ChatMessage = { role: "user", content: input.trim() }
     const nextMessages = [...messages, userMessage]
@@ -58,24 +109,36 @@ export function ChatWidget() {
       }
 
       const supabase = getSupabase()
+      // Only the conversation turns are sent; the opening disclaimer is UI-only.
+      const history = nextMessages.slice(1)
       const { data, error: fnError } = await supabase.functions.invoke("chat", {
-        body: { messages: nextMessages },
+        body: { messages: history, guestId: guestId || getGuestId() },
       })
 
       if (fnError) {
-        // Surface the real reason (the function's JSON body lives in .context).
+        // The function's JSON body lives in .context on a non-2xx response.
         let detail = fnError.message
+        let code: string | undefined
         const ctx = (fnError as { context?: Response }).context
         try {
           if (ctx && typeof ctx.json === "function") {
             const body = await ctx.json()
             if (body?.error) detail = body.error
+            code = body?.code
           }
         } catch {
           /* ignore */
         }
+        if (code === "guest_limit") {
+          setGateHit(true)
+          setRemaining(0)
+          setError(null)
+          return
+        }
         throw new Error(detail)
       }
+
+      if (typeof data?.remaining === "number") setRemaining(data.remaining)
 
       const assistantMessage: ChatMessage = {
         role: "assistant",
@@ -177,29 +240,70 @@ export function ChatWidget() {
             ))}
             {error && <div className="text-[10px] text-red-400">{error}</div>}
           </div>
-          <form
-            onSubmit={handleSend}
-            className="border-t border-zinc-800 px-3 py-2 flex gap-2"
-          >
-            <input
-              type="text"
-              placeholder={
-                loading ? "Waiting for response..." : "Type your message..."
-              }
-              className="flex-1 rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs outline-none focus:border-zinc-500 disabled:opacity-60"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              disabled={loading}
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-white hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-60"
-              aria-label="Send message"
-            >
-              <Send className="h-4 w-4" />
-            </button>
-          </form>
+
+          {locked ? (
+            // Guest has used every free prompt -> sign-up wall replaces the input.
+            <div className="border-t border-zinc-800 px-4 py-4 space-y-3 text-center">
+              <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/15">
+                <Lock className="h-5 w-5 text-emerald-400" />
+              </div>
+              <p className="text-xs font-semibold text-zinc-100">
+                You&apos;ve used your {GUEST_PROMPT_LIMIT} free questions
+              </p>
+              <p className="text-[11px] text-zinc-400">
+                Create a free account to keep chatting with Ayn Legal AI — no limits.
+              </p>
+              <div className="flex gap-2">
+                <Link href="/signup" className="flex-1">
+                  <span className="block rounded-lg bg-emerald-500 px-3 py-2 text-xs font-medium text-white hover:bg-emerald-400">
+                    Sign up free
+                  </span>
+                </Link>
+                <Link href="/login" className="flex-1">
+                  <span className="block rounded-lg border border-zinc-700 px-3 py-2 text-xs font-medium text-zinc-200 hover:bg-zinc-900">
+                    Log in
+                  </span>
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <>
+              <form
+                onSubmit={handleSend}
+                className="border-t border-zinc-800 px-3 py-2 flex gap-2"
+              >
+                <input
+                  type="text"
+                  placeholder={
+                    loading ? "Waiting for response..." : "Type your message..."
+                  }
+                  className="flex-1 rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs outline-none focus:border-zinc-500 disabled:opacity-60"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  maxLength={2000}
+                  disabled={loading}
+                />
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-white hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-60"
+                  aria-label="Send message"
+                >
+                  <Send className="h-4 w-4" />
+                </button>
+              </form>
+
+              {isGuest && remaining !== null && (
+                <p className="px-3 pb-2 text-[10px] text-zinc-500">
+                  {remaining} free {remaining === 1 ? "question" : "questions"} left ·{" "}
+                  <Link href="/signup" className="text-emerald-400 hover:underline">
+                    sign up
+                  </Link>{" "}
+                  for unlimited
+                </p>
+              )}
+            </>
+          )}
         </div>
       )}
 

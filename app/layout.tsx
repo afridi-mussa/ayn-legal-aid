@@ -2,11 +2,9 @@ import type React from "react"
 import type { Metadata } from "next"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
-import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import { ChatWidget } from "@/components/chat-widget"
 import { AuthProvider } from "@/components/auth-provider"
-// import { WebinarModal } from "@/components/webinar-modal"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -27,8 +25,6 @@ export default function RootLayout({
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
         <AuthProvider>
           <Suspense fallback={null}>{children}</Suspense>
-          {/* <WebinarModal /> */}
-          <Analytics />
           <ChatWidget />
         </AuthProvider>
       </body>

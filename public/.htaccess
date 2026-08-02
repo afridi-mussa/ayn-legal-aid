@@ -1,0 +1,90 @@
+# ============================================================
+# Ayn Legal Aid — Apache / LiteSpeed config for Hostinger
+#
+# This file lives in public/ so `next build` copies it into out/.
+# Upload it to public_html together with the rest of out/.
+# NOTE: .htaccess is a hidden file — enable "show hidden files"
+# in Hostinger's File Manager or it will look like it vanished.
+# ============================================================
+
+# ---------- force HTTPS ----------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# ---------- security headers ----------
+<IfModule mod_headers.c>
+  # Stop the site being framed (clickjacking).
+  Header always set X-Frame-Options "DENY"
+
+  # Don't let browsers guess a file's type.
+  Header always set X-Content-Type-Options "nosniff"
+
+  # Don't leak the full URL to other sites.
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # Turn off hardware APIs the site never uses.
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
+
+  # Force HTTPS for 1 year (only takes effect over HTTPS).
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+  # Content Security Policy.
+  #   'unsafe-inline'/'unsafe-eval' on script-src are required by a Next.js
+  #   static export (no server = no per-request nonce).
+  #   connect-src allows the Supabase API + Edge Functions.
+  #   img-src allows https: so Supabase avatar URLs load.
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
+
+  # Never cache HTML (so deploys take effect immediately).
+  <FilesMatch "\.(html)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+
+  # Hashed build assets are immutable — cache them hard.
+  <FilesMatch "\.(js|css|woff2|woff|ttf|svg|jpg|jpeg|png|gif|webp|avif|ico)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>
+
+# ---------- block sensitive files ----------
+# Nothing below should ever be on the server, but if one is uploaded by
+# mistake it must not be readable.
+# Deliberately does NOT block all .json — the build output serves some at
+# runtime. Only genuinely sensitive names are listed.
+<FilesMatch "(^\.|\.(env|sql|md|log|bak|old|orig|sh|yml|yaml|lock|ts|tsx|mjs)$|^(package|package-lock|tsconfig|components)\.json$|^next\.config\.)">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# The build output contains no .git / node_modules, but block them anyway.
+<IfModule mod_rewrite.c>
+  RewriteRule ^(\.git|\.github|node_modules|supabase)(/|$) - [F,L]
+</IfModule>
+
+# ---------- no directory listings ----------
+Options -Indexes
+
+# ---------- hide the server signature ----------
+ServerSignature Off
+
+# ---------- custom error pages ----------
+# Next.js exports app/not-found.tsx as 404.html.
+ErrorDocument 404 /404.html
+
+# ---------- compression ----------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
+  AddOutputFilterByType DEFLATE application/javascript application/x-javascript
+  AddOutputFilterByType DEFLATE application/json application/xml
+  AddOutputFilterByType DEFLATE image/svg+xml font/ttf font/otf
+</IfModule>
