@@ -24,9 +24,21 @@
 
 name: Deploy to Hostinger
 
+# PARKED 2026-08-02 — does NOT run on push. Manual trigger only.
+#
+# WHY: this server has TWO complete copies of the site. FTP logs in at
+#   domains/aynlegalaid.com/public_html
+# but the web server serves a DIFFERENT public_html (the one Hostinger's File
+# Manager shows at its root). Every upload succeeded and the live site never
+# changed. Nothing in hPanel indicates this.
+#
+# The site-scoped account (u419952466.syedmussa06) is locked inside the wrong
+# folder. To finish this, use the MAIN account (u419952466), which sits a level
+# higher, and set the lftp target to an absolute /public_html/ — untested.
+#
+# Until then, deploy manually: npm run build, then drag everything in out/
+# (including the hidden .htaccess) into public_html via File Manager.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 # Never let two deploys race each other onto the same server.
