@@ -108,13 +108,16 @@ jobs:
           protocol: ftps
           port: 21
           local-dir: ./out/
-          # The main FTP account logs in at the ACCOUNT HOME (/home/u419952466),
-          # not at the site folder. On this plan the document root for the
-          # domain is domains/<domain>/public_html — plain "public_html/" is a
-          # different directory that is not served, and uploading there fails
-          # silently (the deploy reports success, the site never changes).
-          # A per-site FTP account is rooted at the docroot, so it would use ./
-          server-dir: domains/aynlegalaid.com/public_html/
+          # MUST be used with the site-scoped FTP account
+          # (u419952466.syedmussa06), which hPanel roots directly at
+          # /home/u419952466/domains/aynlegalaid.com/public_html — the document
+          # root. Uploading to "./" therefore lands exactly on the live site.
+          #
+          # Do NOT switch back to the main account (u419952466). Its login root
+          # is somewhere else, and both "public_html/" and
+          # "domains/aynlegalaid.com/public_html/" were tried from it: the FTP
+          # step reported success while the site never changed.
+          server-dir: ./
           # Keeps SSL renewal files and the action's own sync state intact.
           exclude: |
             **/.git*
