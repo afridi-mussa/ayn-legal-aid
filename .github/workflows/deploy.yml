@@ -96,34 +96,36 @@ jobs:
           fi
           echo "Build output looks good ($(find out -type f | wc -l) files)."
 
-      - name: Upload to Hostinger
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          # Explicit FTPS over port 21. Plain "ftp" would send the password in
-          # clear text. If Hostinger ever rejects the TLS handshake, change this
-          # to "ftp" — but try "ftps-legacy" first before giving up encryption.
-          protocol: ftps
-          port: 21
-          local-dir: ./out/
-          # MUST be used with the site-scoped FTP account
-          # (u419952466.syedmussa06), which hPanel roots directly at
-          # /home/u419952466/domains/aynlegalaid.com/public_html — the document
-          # root. Uploading to "./" therefore lands exactly on the live site.
-          #
-          # Do NOT switch back to the main account (u419952466). Its login root
-          # is somewhere else, and both "public_html/" and
-          # "domains/aynlegalaid.com/public_html/" were tried from it: the FTP
-          # step reported success while the site never changed.
-          server-dir: ./
-          # Keeps SSL renewal files and the action's own sync state intact.
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.well-known/**
+      # lftp instead of SamKirkland/FTP-Deploy-Action: that action failed with
+      # "550 /_next/<buildid>: No such file or directory" because it could not
+      # create this build's 111 nested directories on Hostinger's FTP server.
+      # lftp's mirror handles directory creation properly, and pwd/ls print the
+      # real login directory — which is what makes a wrong upload target
+      # obvious in the log instead of silent.
+      - name: Upload to Hostinger over FTPS
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          LFTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+          lftp --env-password -u "$FTP_USERNAME" "ftp://$FTP_SERVER" <<'LFTP'
+          set ftp:ssl-allow true
+          set ftp:ssl-force true
+          set ftp:ssl-protect-data true
+          set ssl:verify-certificate false
+          set net:max-retries 3
+          set net:timeout 20
+          echo "--- login directory ---"
+          pwd
+          echo "--- what is already here ---"
+          ls
+          echo "--- uploading ---"
+          mirror -R --verbose=1 --parallel=4 --exclude-glob .well-known/ ./out/ ./
+          echo "--- after upload ---"
+          ls
+          bye
+          LFTP
 
       # Uploading to the wrong server-dir still reports success, so confirm the
       # live site is actually serving THIS commit before calling it a deploy.
